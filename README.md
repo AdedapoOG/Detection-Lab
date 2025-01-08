@@ -21,9 +21,14 @@ The Detection Lab project aimed to establish a controlled environment for simula
 
 ## Steps
 - Network_Configuration
-  ![Screenshot 2025-01-08 065446](https://github.com/user-attachments/assets/63fdfd3c-695a-45fd-ba45-06d64b0120ab)
+- The following screenshot shows the **Network Adapter settings** for both **Kali Linux** and **Metasploitable 2** virtual machines, which are set to **Host-Only** networking for communication.
 
-  
+  ![Kali_adapter_settings](https://github.com/user-attachments/assets/63fdfd3c-695a-45fd-ba45-06d64b0120ab)
+  ![metasploit_adapter_settings](https://github.com/user-attachments/assets/30010a20-84b3-4cfd-9938-e7bbfef445db)
+
+
+
+
       - network_adapter_settings.png
     - IP_Configuration/
       - kali_ip_configuration.png
