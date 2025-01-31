@@ -1,4 +1,4 @@
-# Detection-Lab
+1# Detection-Lab
 
 ## Objective
 
@@ -65,12 +65,78 @@ Secure FTP Traffic: Use FTPS (FTP Secure) or SFTP (Secure FTP over SSH) instead 
 Monitor FTP Activity: Implement logging and monitoring to detect unauthorized access attempts.
 
 ### 2. Port 22 - SSH
-- **Vulnerability**: Weak passwords can lead to brute-force attacks.
-- **Recommendation**: Use public-key authentication and disable password-based logins.
+**Vulnerability**: Weak passwords can lead to brute-force attacks.
+
+objective is to test by trying to log in using default credentials
+![image](https://github.com/user-attachments/assets/91a99c83-f317-48d8-be67-7f31ae934b2c)
+I was able to succesfully log in to the machine via SSH using the default credentials
+this can be exploited as attackers can log in and gain remote shell access
+
+**Recommendation**
+Use public-key authentication and disable password-based logins.
+update OpenSSH to the latest version
 
 ### 3. Port 23 - Telnet
-- **Vulnerability**: Transmits data in plaintext, including passwords.
-- **Recommendation**: Disable Telnet and use SSH.
+**Vulnerability**: Transmits data in plaintext, including passwords.
+
+objective is to determine if Telnet allows unauthorized assess and test for plaintext crednetial transmission
+![image](https://github.com/user-attachments/assets/a542b22c-bb6b-4180-b548-12dbfd98451a)
+Telnet is inherently insecure as credentials and data are transmitted in plaintext, making it easy to intercept with tools like Wireshark.
+also, using default credentials (e.g., msfadmin) is a critical weakness.
+
+
+**Recommendation**
+Disable Telnet and use SSH.
+
+### 4. Port 25 - SMTP
+**Vulnerability**
+Commands like VRFY and EXPN allow attackers to identify valid users on the system.
+Open Relay: If the server allows emails to be sent without authentication, it can be used for spamming or phishing.
+
+objective is determine if the Postfix SMTP server is misconfigured or vulnerable and test for email-related vulnerabilities, such as user enumeration or open relay.
+
+Test Result
+![image](https://github.com/user-attachments/assets/c0166af8-79e5-44a4-9656-a83002d3ad0e)
+
+1. VRFY Command
+Output: 252 2.0.0 root
+The VRFY command successfully verified the existence of the root user. This indicates that user enumeration is possible, which is a significant vulnerability.
+2. EXPN Command
+Output: 502 5.5.2 Error: command not recognized
+The EXPN command is disabled on the server, which is a positive security measure. No vulnerability here.
+3. Open Relay Test
+Output:
+250 2.1.0 Ok for the sender address (MAIL FROM).
+554 5.7.1 Relay access denied for the recipient address (RCPT TO).
+The SMTP server is not an open relay, which is good. It only allows email relaying from authorized users or internal domains.
+
+vulnerability found
+Attackers can use the VRFY command to verify the existence of valid system users (e.g., root, admin).
+This information can aid in brute-force or phishing attacks.
+
+
+
+
+**Recommendation**
+Update the Postfix SMTP configuration (/etc/postfix/main.cf) to disable VRFY
+Configure the SMTP server to require authentication for sending emails, even for internal users.
+To use the latest version of Postfix to address potential security flaws in older versions.
+To Enable detailed logging to monitor suspicious SMTP activity and identify potential enumeration attempts.
+
+### 5. Port 80 - HTTP
+**Vulnerability**
+Outdated Apache versions may contain vulnerabilities like buffer overflows or directory traversal.
+Web applications may be vulnerable to SQL injection or XSS.
+
+objective is to access the web server in a browser and scan for vulnerabilities
+
+**Recommendation**
+Update Apache to the latest version.
+Secure web applications by sanitizing inputs.
+
+
+
+
 
 
 
