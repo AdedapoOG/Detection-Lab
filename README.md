@@ -2,7 +2,7 @@
 
 ## Objective
 
-The Detection Lab project aimed to establish a controlled environment for simulating and detecting cyber attacks. The primary focus was to ingest and analyze logs within a Security Information and Event Management (SIEM) system, generating test telemetry to mimic real-world attack scenarios. This hands-on experience was designed to deepen understanding of network security, attack patterns, and defensive strategies.
+The Detection Lab project aimed to identify and analyze vulnerabilities on Metasploitable 2, a deliberately vulnerable system, using tools like Nmap, Nikto, and MySQL client 
 
 ### Skills Learned
 
@@ -13,11 +13,30 @@ The Detection Lab project aimed to establish a controlled environment for simula
 - Enhanced knowledge of network protocols and security vulnerabilities.
 - Development of critical thinking and problem-solving skills in cybersecurity.
 
-### Tools Used
+### Methodology
+Scanned the target using Nmap to identify open ports and services.
+Conducted service-specific testing on critical ports like FTP, SSH, SMB, HTTP, and MySQL.
+Documented vulnerabilities, tested exploitability, and provided mitigation strategies.
 
-- Security Information and Event Management (SIEM) system for log ingestion and analysis.
+### Tools Used
+- Nmap, Nikto, rpcinfo, smbclient, MySQL client, and Metasploit.
 - Network analysis tools (such as Wireshark) for capturing and examining network traffic.
-- Telemetry generation tools to create realistic network traffic and attack scenarios.
+
+### Commands Used
+Nmap:
+**nmap -sV -A 192.168.253.128**
+Nikto:
+**nikto -h http://192.168.253.128**
+SMB:
+**smbclient -L //192.168.253.128**
+**smbclient //192.168.253.128/tmp**
+MySQL:
+**mysql -h 192.168.253.128 -u root --skip-ssl**
+
+
+
+
+
 
 ## Steps
 # Network_Configuration
@@ -114,9 +133,6 @@ vulnerability found
 Attackers can use the VRFY command to verify the existence of valid system users (e.g., root, admin).
 This information can aid in brute-force or phishing attacks.
 
-
-
-
 **Recommendation**
 Update the Postfix SMTP configuration (/etc/postfix/main.cf) to disable VRFY
 Configure the SMTP server to require authentication for sending emails, even for internal users.
@@ -157,14 +173,73 @@ Older versions of BIND may allow DNS amplification or zone transfer attacks.
 Objective is to check for DNS zone transfer vulnerabilities:
 
 Test Result
-![image](https://github.com/user-attachments/assets/fe3cffb2-b9fd-43c0-a5aa-1a164b824356)
+![image](https://github.com/user-attachments/assets/25cbe026-8103-4305-a2a2-fe3e7b660dd4)
 
+Key Findings
+DNS Query for A Record
+dig @192.168.253.128 metasploitable.localdomain A
+Output:
+SERVFAIL response for the A record query.
+Indicates that the DNS server failed to process the query for the A record.
+
+-DNS Query for MX Record
+Similar SERVFAIL response for the MX record query.
+This suggests that the DNS server is misconfigured or restricted from responding to external queries.
+-Reverse DNS Lookup
+Communication timed out.
+Indicates the DNS server did not respond to reverse lookup queries, possibly due to restrictions.
+
+**Analysis**
+The DNS service on Port 53 is active but appears to be 
+-Misconfigured or Restricted: The server is not allowing certain types of queries, such as A records, MX records, or reverse lookups.
+-Lack of Zone Transfer Vulnerability: Since queries fail or time out, it is unlikely that the server is vulnerable to zone transfer attacks.
 
 **Recommendation**
 Update BIND to the latest secure version.
 Disable zone transfers unless explicitly required.
+Enable logging on the DNS server to track query attempts and failures.
+
+### 7. Port 139/445 - SMB (Samba)
+**Vulnerability**
+Anonymous login allows unauthenticated access to SMB shares.
+Writable shares (like tmp) can be exploited for malicious uploads.
+Outdated Samba version (3.0.20) is vulnerable to known exploits (e.g., EternalBlue)
+
+*objective* is to analyze file-sharing services for potential vulnerabilities like unauthenticated access or exploits.
+
+Test Result
+![image](https://github.com/user-attachments/assets/250509be-1d90-4ff7-9af6-1637920c8d85)
+
+Key Findings
+Anonymous access allowed to SMB shares, including potentially writable directories like tmp.
+
+**Recommendation**
+Disable anonymous login and secure shared resources as outlined above.
+
+### 9. Port 3306 - SQL
+**Vulnerability**
+No Password for Root: This allows anyone to connect as the root user and access all databases.
+Remote Access Enabled: The MySQL server allows connections from external IP addresses, increasing the attack surface.
+Outdated MySQL Version: Vulnerable to known exploits that could allow attackers to execute arbitrary code.
+
+Objective is to check the MySQL database service for weak/default credentials or misconfigurations that could allow unauthorized access.
+
+Test Result
+![image](https://github.com/user-attachments/assets/62838cdd-0aa8-4fc5-ba04-3cf926625248)
+
+I tried to test but the ERROR 2026 (HY000): TLS/SSL error: wrong version number" occured because the MySQL client is attempting to use SSL/TLS, but the MySQL server on Metasploitable 2 doesn’t support it or isn’t configured for it. so I Disabled the SSL/TLS for the Connection by adding Add the --skip-ssl flag to the command amd got the result
+
+![image](https://github.com/user-attachments/assets/f8c35c29-ffa8-41f3-8753-de9fc380c530)
+-This shows that The MySQL server is configured to allow the root user to log in without a password and provides unauthorized access to the entire database.
+-The server is running MySQL 5.0.51a, an outdated version with multiple known vulnerabilities, which includes authentication bypass, privilege escalation, remote code execution.
 
 
+**Recommendation**
+Set a strong root password and disable remote access.
+Update MySQL to the latest version.
+Monitor database activity using logging.
 
+### Key Findings Table
+![image](https://github.com/user-attachments/assets/ca6e7b61-6902-4a12-b43e-52e20c6f6b12)
 
 
