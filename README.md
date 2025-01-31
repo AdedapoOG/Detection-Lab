@@ -130,8 +130,24 @@ Web applications may be vulnerable to SQL injection or XSS.
 
 objective is to access the web server in a browser and scan for vulnerabilities
 
+Test Result
+![image](https://github.com/user-attachments/assets/fe3cffb2-b9fd-43c0-a5aa-1a164b824356)
+
+Key Findings from Nikto
+-The server is running Apache/2.2.8, which is outdated and no longer supported.
+-The server does not prevent clickjacking attacks, making it vulnerable to malicious frames.
+This can allow attackers to exploit MIME type mismatches.
+-HTTP TRACE is active, making the host vulnerable to Cross-Site Tracing (XST).
+-The server lists the contents of directories like /doc/ and /phpMyAdmin/ChangeLog.
+-Attackers can access sensitive files or gather information about the server’s configuration.
+-The phpMyAdmin interface is accessible and reveals sensitive information about the database.
+
 **Recommendation**
-Update Apache to the latest version.
+Recommendation:
+Update Apache to the latest version: Update the Apache HTTP server to a modern, supported version (e.g., 2.4.x).
+Disable HTTP TRACE in Apache
+Disable directory listing in Apache by adding this line to the configuration
+Restrict access to phpMyAdmin by adding IP-based restrictions or password protection:
 Secure web applications by sanitizing inputs.
 
 
