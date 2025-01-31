@@ -2,7 +2,7 @@
 
 ## Objective
 
-The Detection Lab project aimed to identify and analyze vulnerabilities on Metasploitable 2, a deliberately vulnerable system, using tools like Nmap, Nikto, and MySQL client 
+This project involves analyzing vulnerabilities on Metasploitable 2, a deliberately vulnerable virtual machine designed for testing and learning. The objective is to identify security flaws, assess their impact, and propose actionable mitigation strategies. This portfolio demonstrates proficiency in vulnerability scanning, service enumeration, and security best practices.
 
 ### Skills Learned
 
@@ -14,28 +14,30 @@ The Detection Lab project aimed to identify and analyze vulnerabilities on Metas
 - Development of critical thinking and problem-solving skills in cybersecurity.
 
 ### Methodology
-Scanned the target using Nmap to identify open ports and services.
+Conducted an Nmap scan to identify open ports and services running on Metasploitable 2.
+Proposed mitigation strategies for each identified issue.
 Conducted service-specific testing on critical ports like FTP, SSH, SMB, HTTP, and MySQL.
 Documented vulnerabilities, tested exploitability, and provided mitigation strategies.
 
 ### Tools Used
-- Nmap, Nikto, rpcinfo, smbclient, MySQL client, and Metasploit.
-- Network analysis tools (such as Wireshark) for capturing and examining network traffic.
+Nmap: For scanning open ports and service enumeration.
+Nikto: For web server vulnerability analysis.
+Smbclient: For interacting with SMB shares.
+MySQL Client: For testing database access.
+Metasploit Framework: For testing known exploits.
 
 ### Commands Used
 Nmap:
 **nmap -sV -A 192.168.253.128**
 Nikto:
 **nikto -h http://192.168.253.128**
+
+**Service-Specific Tests**
 SMB:
 **smbclient -L //192.168.253.128**
 **smbclient //192.168.253.128/tmp**
 MySQL:
 **mysql -h 192.168.253.128 -u root --skip-ssl**
-
-
-
-
 
 
 ## Steps
@@ -241,5 +243,40 @@ Monitor database activity using logging.
 
 ### Key Findings Table
 ![image](https://github.com/user-attachments/assets/ca6e7b61-6902-4a12-b43e-52e20c6f6b12)
+
+### Recommendations
+Update All Software:
+Ensure all services (e.g., Apache, MySQL, Samba) are upgraded to the latest, supported versions to mitigate known vulnerabilities.
+
+Disable Unnecessary Services:
+Completely disable insecure protocols like Telnet and FTP unless absolutely necessary. Replace them with secure alternatives like SSH and SFTP.
+
+Harden Authentication:
+Enforce strong passwords for all accounts and disable default credentials (e.g., msfadmin).
+Implement key-based authentication for SSH and limit access to trusted IPs.
+
+Secure Network Configuration:
+Use a firewall to restrict access to critical ports like SMTP (25), SMB (139/445), and MySQL (3306).
+Disable anonymous login for SMB and restrict shared resources.
+
+Mitigate Protocol-Specific Risks:
+Telnet (Port 23): Disable Telnet service and replace it with SSH.
+SMTP (Port 25): Disable commands like VRFY and enforce authentication for sending emails.
+SMB (Port 139/445): Disable SMBv1 and configure shares with strict access permissions.
+MySQL (Port 3306): Set a strong root password and restrict remote connections by binding MySQL to localhost.
+HTTP (Port 80): Update Apache to the latest version, disable directory indexing, and add security headers.
+
+Enable Monitoring and Logging: Enable logging for all services to monitor suspicious activities, such as failed login attempts or unauthorized file access.
+
+Implement Defense-in-Depth: Combine network-level controls (firewalls, IDS/IPS) with host-level controls (strong passwords, software updates) for layered security.
+
+### Conclusion
+This project involved identifying and analyzing vulnerabilities on Metasploitable 2. Through vulnerability scanning and service-specific testing, several critical issues were uncovered:
+Default and weak credentials allowing unauthorized access to services like SSH, Telnet, and MySQL. Insecure configurations in SMB, SMTP, and HTTP, exposing the system to potential data breaches and remote code execution. Outdated software versions, such as Apache 2.2.8 and Samba 3.0.20, that are vulnerable to known exploits.
+Each vulnerability was analyzed, and actionable recommendations were provided to mitigate these risks, such as disabling insecure protocols, enforcing strong authentication, and updating software. This project highlights the importance of proactive security measures, including regular vulnerability assessments, to protect systems from exploitation. It also demonstrates my ability to identify, analyze, and mitigate real-world security risks effectively.
+
+
+
+
 
 
