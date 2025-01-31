@@ -143,7 +143,6 @@ This can allow attackers to exploit MIME type mismatches.
 -The phpMyAdmin interface is accessible and reveals sensitive information about the database.
 
 **Recommendation**
-Recommendation:
 Update Apache to the latest version: Update the Apache HTTP server to a modern, supported version (e.g., 2.4.x).
 Disable HTTP TRACE in Apache
 Disable directory listing in Apache by adding this line to the configuration
@@ -151,8 +150,19 @@ Restrict access to phpMyAdmin by adding IP-based restrictions or password protec
 Secure web applications by sanitizing inputs.
 
 
+### 6. Port 53 - DNS
+**Vulnerability**
+Older versions of BIND may allow DNS amplification or zone transfer attacks.
+
+Objective is to check for DNS zone transfer vulnerabilities:
+
+Test Result
+![image](https://github.com/user-attachments/assets/fe3cffb2-b9fd-43c0-a5aa-1a164b824356)
 
 
+**Recommendation**
+Update BIND to the latest secure version.
+Disable zone transfers unless explicitly required.
 
 
 
